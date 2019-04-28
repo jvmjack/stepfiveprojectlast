@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.wanho.mapper.UserMapper">
+    <!--id的值与接口中方法名同名，parameterType即方法的参数类型，useGeneratedKeys即使用自增主键，keyProperty定义了主键-->
+   <resultMap id="resultMap" type="net.wanho.entity.User">
+       <id column="id" property="id"></id>
+       <result column="username" property="userName"></result>
+       <result column="password" property="password"></result>
+       <result column="salt" property="salt"></result>
+   </resultMap>
+    <resultMap id="resultMapRole" type="net.wanho.entity.Role">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+    </resultMap>
+    <!--&lt;!&ndash;增加用户&ndash;&gt;-->
+    <!--<insert id="addUser" parameterType="net.wanho.entity.User" useGeneratedKeys="true" keyProperty="id">-->
+        <!--insert into p_user(name) values(#{name})-->
+    <!--</insert>-->
+    <!--用户登录验证-->
+    <select id="login"  resultMap="resultMap" parameterType="java.lang.String">
+        select * from p_user where username=#{userName} and password=#{password}
+    </select>
+    <!--查询所有用户-->
+    <select id="queryUser"  resultMap="resultMap" parameterType="java.lang.String">
+        select * from p_user
+    </select>
+    <!--根据用户id查Role-->
+    <select id="selectRoleByUid"  resultMap="resultMapRole" parameterType="java.lang.String">
+        select * from  p_userandrole where u_id=#{id}
+    </select>
+    <!--删除user-->
+    <delete id="deleteUserById"  >
+       delete from p_user where id=#{id}
+    </delete>
+    <!--添加用户职位-->
+    <insert id="addUserRole" parameterType="int">
+        insert into p_userandrole(u_id,role) values (#{0},#{1})
+    </insert>
+    <!--删除用户职位-->
+    <delete id="deleteUserRole"  >
+        delete from p_userandrole where u_id=#{uid}
+    </delete>
+    <!--添加用户-->
+    <insert id="addUser" parameterType="net.wanho.entity.User">
+             /*获取自增的主键*/
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select  last_insert_id()
+        </selectKey>
+        insert into p_user(username,password,salt) values (#{userName},#{password},#{salt})
+    </insert>
+    <!--通过id搜寻用户-->
+    <select id="queryUserByUsername" resultMap="resultMap">
+        select * from p_user where username=#{userName}
+    </select>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.wanho.mapper.RoleMapper">
+    <!--id的值与接口中方法名同名，parameterType即方法的参数类型，useGeneratedKeys即使用自增主键，keyProperty定义了主键-->
+    <resultMap id="resultMapRole" type="net.wanho.entity.Role">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+    </resultMap>
+    <!--//只包含id的role map-->
+    <resultMap id="resultMap" type="net.wanho.entity.Role">
+        <id column="role" property="id"></id>
+    </resultMap>
+    <select id="queryRole"  resultMap="resultMapRole" parameterType="java.lang.String">
+        select * from p_role
+    </select>
+    <select id="queryRoleByUid"  resultMap="resultMapRole" >
+        select r.id ,r.name from  p_user  u, p_userandrole uar,p_role r where   u.id=uar.u_id and uar.role=r.id    and    u_id=#{uid}
+    </select>
+    <!--添加职位权限-->
+    <insert id="addRolePermission" parameterType="int">
+        insert into p_roleandpermission(r_id,p_id) values (#{0},#{1})
+    </insert>
+    <!--删除职位权限-->
+    <delete id="deleteRolePermisson">
+        delete from p_roleandpermission where r_id=#{0}
+    </delete>
+    <select id="queryRoleByUId" resultMap="resultMap">
+      select role from p_userandrole where u_id=#{0}
+  </select>
+</mapper>
